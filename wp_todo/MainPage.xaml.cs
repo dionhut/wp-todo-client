@@ -26,6 +26,28 @@ namespace wp_todo
 
     public partial class MainPage : PhoneApplicationPage
     {
+        private MobileServiceUser user;
+        private async System.Threading.Tasks.Task Authenticate()
+        {
+            while (user == null)
+            {
+                string message;
+                try
+                {
+                    user = await App.MobileService
+                        .LoginAsync(MobileServiceAuthenticationProvider.MicrosoftAccount);
+                    message =
+                        string.Format("You are now logged in - {0}", user.UserId);
+                }
+                catch (InvalidOperationException)
+                {
+                    message = "You must log in. Login Required";
+                }
+
+                MessageBox.Show(message);
+            }
+        }
+        
         // MobileServiceCollectionView implements ICollectionView (useful for databinding to lists) and 
         // is integrated with your Mobile Service to make it easy to bind your data to the ListView
         private MobileServiceCollection<TodoItem, TodoItem> items;
@@ -36,6 +58,7 @@ namespace wp_todo
         public MainPage()
         {
             InitializeComponent();
+            this.Loaded += MainPage_Loaded;
         }
 
         private async void InsertTodoItem(TodoItem todoItem)
@@ -92,8 +115,9 @@ namespace wp_todo
             UpdateCheckedTodoItem(item);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            await Authenticate();
             RefreshTodoItems();
         }
     }
