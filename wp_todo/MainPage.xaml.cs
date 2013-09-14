@@ -9,9 +9,9 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using wp_todo1.Resources;
+using wp_todo.Resources;
 
-namespace wp_todo1
+namespace wp_todo
 {
     public class TodoItem
     {
@@ -81,6 +81,7 @@ namespace wp_todo1
         {
             var todoItem = new TodoItem { Text = TodoInput.Text };
             InsertTodoItem(todoItem);
+            TodoInput.Text = "";
         }
 
         private void CheckBoxComplete_Checked(object sender, RoutedEventArgs e)

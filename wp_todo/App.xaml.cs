@@ -6,11 +6,11 @@ using System.Windows.Markup;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using wp_todo1.Resources;
+using wp_todo.Resources;
 
 using Microsoft.WindowsAzure.MobileServices;
 
-namespace wp_todo1
+namespace wp_todo
 {
     public partial class App : Application
     {
@@ -21,8 +21,8 @@ namespace wp_todo1
         public static PhoneApplicationFrame RootFrame { get; private set; }
 
         public static MobileServiceClient MobileService = new MobileServiceClient(
-            "https://wp-todo1.azure-mobile.net/",
-            "wVCXVaaLQjPgIWzClNrTxYRVBAUDoQ28"
+            "https://wp-todo.azure-mobile.net/",
+            "IoGjzRZBAYbzpXUiwTFEhtCweyQBoK44"
             );
         
         /// <summary>

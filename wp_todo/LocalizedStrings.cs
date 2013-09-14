@@ -1,6 +1,6 @@
-﻿using wp_todo1.Resources;
+﻿using wp_todo.Resources;
 
-namespace wp_todo1
+namespace wp_todo
 {
     /// <summary>
     /// Provides access to string resources.

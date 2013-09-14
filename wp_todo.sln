@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Phone
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wp_todo1", "wp_todo1\wp_todo1.csproj", "{3002E0CA-D005-4D93-BCA4-E23E83DDD847}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wp_todo", "wp_todo\wp_todo.csproj", "{3002E0CA-D005-4D93-BCA4-E23E83DDD847}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9CFD7FE0-5298-49CF-B2DF-B7D816199C48}"
 	ProjectSection(SolutionItems) = preProject
