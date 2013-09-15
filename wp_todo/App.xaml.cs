@@ -9,6 +9,7 @@ using Microsoft.Phone.Shell;
 using wp_todo.Resources;
 
 using Microsoft.WindowsAzure.MobileServices;
+using Microsoft.Phone.Notification;
 
 namespace wp_todo
 {
@@ -68,6 +69,7 @@ namespace wp_todo
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+            AcquirePushChannel();
         }
 
         // Code to execute when the application is activated (brought to foreground)
@@ -224,6 +226,20 @@ namespace wp_todo
                 }
 
                 throw;
+            }
+        }
+
+        public static HttpNotificationChannel CurrentChannel { get; private set; }
+        private void AcquirePushChannel()
+        {
+            CurrentChannel = HttpNotificationChannel.Find("MyPushChannel");
+
+
+            if (CurrentChannel == null)
+            {
+                CurrentChannel = new HttpNotificationChannel("MyPushChannel");
+                CurrentChannel.Open();
+                CurrentChannel.BindToShellTile();
             }
         }
     }

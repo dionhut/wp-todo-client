@@ -22,6 +22,9 @@ namespace wp_todo
 
         [JsonProperty(PropertyName = "complete")]
         public bool Complete { get; set; }
+
+        [JsonProperty(PropertyName = "channel")]
+        public string Channel { get; set; }
     }
 
     public partial class MainPage : PhoneApplicationPage
@@ -102,7 +105,11 @@ namespace wp_todo
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
-            var todoItem = new TodoItem { Text = TodoInput.Text };
+            var todoItem = new TodoItem
+            {
+                Text = TodoInput.Text,
+                Channel = App.CurrentChannel.ChannelUri.ToString()
+            };
             InsertTodoItem(todoItem);
             TodoInput.Text = "";
         }
@@ -112,6 +119,7 @@ namespace wp_todo
             CheckBox cb = (CheckBox)sender;
             TodoItem item = cb.DataContext as TodoItem;
             item.Complete = true;
+            item.Channel = App.CurrentChannel.ChannelUri.ToString();
             UpdateCheckedTodoItem(item);
         }
 
