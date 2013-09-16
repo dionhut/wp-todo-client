@@ -10,6 +10,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using wp_todo.Resources;
+using Microsoft.Phone.Tasks;
+using System.Net.Http;
+using System.IO;
 
 namespace wp_todo
 {
@@ -25,10 +28,19 @@ namespace wp_todo
 
         [JsonProperty(PropertyName = "channel")]
         public string Channel { get; set; }
+
+        [JsonProperty(PropertyName = "photoName")]
+        public string PhotoName { get; set; }
+
+        [JsonProperty(PropertyName = "photoSAS")]
+        public string PhotoSAS { get; set; }
     }
 
     public partial class MainPage : PhoneApplicationPage
     {
+        CameraCaptureTask cameraCaptureTask;
+        PhotoResult lastTakenPhoto = null;
+
         private MobileServiceUser user;
         private async System.Threading.Tasks.Task Authenticate()
         {
@@ -62,6 +74,9 @@ namespace wp_todo
         {
             InitializeComponent();
             this.Loaded += MainPage_Loaded;
+
+            cameraCaptureTask = new CameraCaptureTask();
+            cameraCaptureTask.Completed += new EventHandler<PhotoResult>(cameraCaptureTask_Completed);
         }
 
         private async void InsertTodoItem(TodoItem todoItem)
@@ -70,6 +85,21 @@ namespace wp_todo
             // and Mobile Services has assigned an Id, the item is added to the CollectionView
             await todoTable.InsertAsync(todoItem);
             items.Add(todoItem);
+
+            // Upload image (if one was taken)
+            if (this.lastTakenPhoto != null)
+            {
+                //Upload image with HttpClient to the blob service using the generated item.SAS
+                using (var client = new HttpClient())
+                {
+                    var content = new StreamContent(lastTakenPhoto.ChosenPhoto);
+                    content.Headers.Add("Content-Type", "image/jpeg");
+                    content.Headers.Add("x-ms-blob-type", "BlockBlob");
+
+                    var uploadResponse = await client.PutAsync(new Uri(todoItem.PhotoSAS), content);
+                    this.lastTakenPhoto = null;
+                }
+            }
         }
 
         private async void RefreshTodoItems()
@@ -105,11 +135,16 @@ namespace wp_todo
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
+
             var todoItem = new TodoItem
             {
                 Text = TodoInput.Text,
                 Channel = App.CurrentChannel.ChannelUri.ToString()
             };
+            if (lastTakenPhoto != null)
+            {
+                todoItem.PhotoName = System.IO.Path.GetFileName(lastTakenPhoto.OriginalFileName);
+            }
             InsertTodoItem(todoItem);
             TodoInput.Text = "";
         }
@@ -127,6 +162,20 @@ namespace wp_todo
         {
             await Authenticate();
             RefreshTodoItems();
+        }
+
+        private void ButtonTakePhoto_Click(object sender, RoutedEventArgs e)
+        {
+            lastTakenPhoto = null;
+            cameraCaptureTask.Show();
+        }
+
+        private void cameraCaptureTask_Completed(object sender, PhotoResult e)
+        {
+            if (e.TaskResult == TaskResult.OK)
+            {
+                this.lastTakenPhoto = e;
+            }
         }
     }
 }
